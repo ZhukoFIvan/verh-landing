@@ -1,0 +1,22 @@
+node_modules
+.next
+out
+dist
+.DS_Store
+*.log
+.vscode
+.idea
+next-env.d.ts
+
+# env: игнорируем ВСЕ env-файлы (в них токены), кроме шаблона
+.env
+.env.*
+!.env.example
+
+# playwright используется только локально для скринов
+/test-results/
+/playwright-report/
+
+# служебное Claude Code
+.claude/
+*.tsbuildinfo
