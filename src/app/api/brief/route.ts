@@ -1,13 +1,40 @@
 import { NextResponse } from "next/server";
+import { esc, notifyAdmins, botConfigured, adminIds } from "@/lib/telegram";
+import { allow } from "@/lib/ratelimit";
 
-// Приём брифа. Если заданы TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID —
-// отправляем заявку в Telegram. Иначе возвращаем 501, и фронт открывает mailto-фолбэк.
+// Приём брифа с формы сайта. Уведомление уходит в Telegram всем ID из
+// TELEGRAM_ADMIN_IDS (через запятую). Если бот не настроен — 501, и фронт
+// открывает mailto-фолбэк.
 export async function POST(req: Request) {
+  if (Number(req.headers.get("content-length") ?? 0) > 65536) {
+    return NextResponse.json({ ok: false, error: "too-large" }, { status: 413 });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ ok: false, error: "bad-json" }, { status: 400 });
+  }
+
+  // ── анти-спам ──
+  // 1) honeypot: скрытое поле, люди его не видят — заполнено значит бот.
+  //    Отвечаем «успехом», чтобы спамер не подбирал обход.
+  if (String(body.website || "").trim()) {
+    return NextResponse.json({ ok: true });
+  }
+  // 2) тайм-гейт: человек не заполняет бриф быстрее 3 секунд
+  const elapsed = Number(body.t ?? NaN);
+  if (Number.isFinite(elapsed) && elapsed >= 0 && elapsed < 3000) {
+    return NextResponse.json({ ok: true });
+  }
+  // 3) частота с одного IP: максимум 5 заявок за 10 минут
+  const ip =
+    req.headers.get("x-real-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
+  if (!allow(`brief:${ip}`, 5, 10 * 60_000)) {
+    return NextResponse.json({ ok: false, error: "rate-limited" }, { status: 429 });
   }
 
   const name = String(body.name || "").trim();
@@ -16,40 +43,30 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "missing-fields" }, { status: 422 });
   }
 
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) {
-    // Бэкенд не настроен — сообщаем фронту, чтобы он открыл почтовый клиент.
+  // страховка от потери лида: в лог до сетевых вызовов (pm2 пишет в файл)
+  console.log("[lead:site]", JSON.stringify({ name, email, at: new Date().toISOString() }));
+
+  if (!botConfigured() || !adminIds().length) {
+    // бэкенд не настроен — сообщаем фронту, чтобы он открыл почтовый клиент
     return NextResponse.json({ ok: false, error: "not-configured" }, { status: 501 });
   }
 
   const services = Array.isArray(body.services) ? body.services.join(", ") : "";
   const text = [
-    "🟢 Новый бриф с сайта VERH",
+    "🟢 <b>Новый бриф с сайта</b>",
     "",
-    `Имя: ${name}`,
-    `Почта: ${email}`,
-    `Контакт: ${body.contact || "—"}`,
-    `Что нужно: ${services || "—"}`,
-    `Бюджет: ${body.budget || "—"}`,
+    `Имя: ${esc(name.slice(0, 200))}`,
+    `Почта: ${esc(email.slice(0, 200))}`,
+    `Контакт: ${esc(String(body.contact || "—").slice(0, 200))}`,
+    `Что нужно: ${esc(services || "—")}`,
+    `Бюджет: ${esc(String(body.budget || "—").slice(0, 100))}`,
     "",
-    String(body.message || "").trim() || "(без описания)",
+    esc(String(body.message || "").trim().slice(0, 3000) || "(без описания)"),
   ].join("\n");
 
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true }),
-      signal: ctrl.signal,
-    });
-    if (!res.ok) throw new Error("tg-failed");
-    return NextResponse.json({ ok: true });
-  } catch {
+  const delivered = await notifyAdmins(text);
+  if (!delivered) {
     return NextResponse.json({ ok: false, error: "send-failed" }, { status: 502 });
-  } finally {
-    clearTimeout(timer);
   }
+  return NextResponse.json({ ok: true });
 }

@@ -21,6 +21,8 @@ export function Contact() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(false);
+  // анти-спам: время с открытия формы (боты сабмитят мгновенно)
+  const [startTs] = useState(() => Date.now());
 
   const toggleService = (s: string) => {
     setServices((prev) => {
@@ -45,6 +47,9 @@ export function Contact() {
       services: Array.from(services),
       budget,
       message: String(data.get("message") || ""),
+      // анти-спам: honeypot (люди не видят и не заполняют) + время заполнения
+      website: String(data.get("website") || ""),
+      t: Date.now() - startTs,
     };
 
     try {
@@ -114,6 +119,12 @@ export function Contact() {
           </div>
         ) : (
           <form className="brief reveal d1" onSubmit={onSubmit} aria-label="Бриф на разработку сайта">
+            {/* honeypot: скрыто от людей (CSS + tabIndex), боты заполняют автоматом */}
+            <div className="hp-field" aria-hidden="true">
+              <label htmlFor="cf-website">Сайт</label>
+              <input id="cf-website" type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </div>
+
             <div className="field">
               <label htmlFor="cf-name">
                 Имя <span className="req">*</span>

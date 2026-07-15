@@ -927,3 +927,11 @@ footer.foot .socials { display: flex; gap: 20px; justify-content: center; }
   .hero-title .w { transform: none !important; }
   .hero-aurora { display: none; }
 }
+
+/* honeypot-поле формы: физически в DOM, но вне экрана (не display:none —
+   умные боты его детектят) */
+.hp-field {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px; height: 1px; overflow: hidden;
+}
