@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
+import { JsonLd } from "@/components/JsonLd";
+import { privacyBreadcrumbLd } from "@/lib/jsonld";
 
+// Страница индексируемая: она в sitemap, а наличие доступной политики ПДн —
+// коммерческий фактор доверия для Яндекса.
 export const metadata: Metadata = {
   title: "Политика обработки персональных данных",
   description: "Как студия VERH обрабатывает персональные данные, оставленные через форму на сайте.",
-  robots: { index: false, follow: true },
   alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {
   return (
     <main className="legal" id="main">
+      <JsonLd id="ld-breadcrumb" data={privacyBreadcrumbLd()} />
       <Link href="/" className="back">← На главную</Link>
       <h1>Политика обработки персональных данных</h1>
 

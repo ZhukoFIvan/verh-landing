@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { Marquee } from "@/components/Marquee";
@@ -13,31 +12,16 @@ import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { ScrollFx } from "@/components/ScrollFx";
 import { JsonLd } from "@/components/JsonLd";
-import {
-  breadcrumbLd,
-  faqLd,
-  portfolioLd,
-  servicesLd,
-} from "@/lib/jsonld";
-import { SITE } from "@/lib/site";
+import { faqLd, portfolioLd, servicesLd } from "@/lib/jsonld";
 
-export const metadata: Metadata = {
-  title: `${SITE.name} — сайты, боты и AI-сервисы · веб-студия в Москве`,
-  description:
-    "VERH — небольшая веб-студия из Москвы. Двое: дизайн и код. Делаем сайты, лендинги, веб-приложения, Telegram-боты и AI-сервисы. От идеи до прода, без шаблонов. Работаем по России и СНГ.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: `${SITE.name} — веб-студия: разработка сайтов под ключ`,
-    description: SITE.description,
-    url: SITE.url,
-    type: "website",
-  },
-};
+// title/description/openGraph/canonical наследуются из layout.tsx:
+// свой metadata здесь дублировал бы их и терял og:locale/og:site_name
+// (openGraph в Next.js не мержится глубоко), а к title применялся бы
+// шаблон «%s · VERH Studio» — бренд в тайтле встречался бы дважды.
 
 export default function HomePage() {
   return (
     <>
-      <JsonLd id="ld-breadcrumb" data={breadcrumbLd()} />
       <JsonLd id="ld-services" data={servicesLd()} />
       <JsonLd id="ld-portfolio" data={portfolioLd()} />
       <JsonLd id="ld-faq" data={faqLd()} />

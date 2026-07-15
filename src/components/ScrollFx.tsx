@@ -53,8 +53,7 @@ export function ScrollFx() {
     );
     document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => cio.observe(el));
 
-    // ── вход героя ──
-    const t = setTimeout(() => document.getElementById("hero")?.classList.add("ready"), 120);
+    // Вход героя — чистые CSS-анимации в globals.css: не зависят от гидрации JS.
 
     // ── прогресс-бар + фон навигации (нативный скролл, rAF-троттлинг) ──
     const prog = document.getElementById("prog");
@@ -165,7 +164,6 @@ export function ScrollFx() {
     return () => {
       io.disconnect();
       cio.disconnect();
-      clearTimeout(t);
       window.removeEventListener("scroll", onScroll);
       cleanups.forEach((fn) => fn());
     };

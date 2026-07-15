@@ -2,26 +2,32 @@ import type { Metadata, Viewport } from "next";
 import { Onest, JetBrains_Mono } from "next/font/google";
 import { SITE } from "@/lib/site";
 import { JsonLd } from "@/components/JsonLd";
+import { Metrika } from "@/components/Metrika";
 import { organizationLd, websiteLd } from "@/lib/jsonld";
 import "./globals.css";
 
-// Onest — гротеск с родной кириллицей: текст 400–500, дисплей 600–800.
+// Onest — гротеск с родной кириллицей. Вариативный шрифт: без списка weight
+// next/font отдаёт один файл на subset (вместо файла на каждый вес).
 const grotesk = Onest({
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-grotesk",
   display: "swap",
   preload: true,
 });
 
-// JetBrains Mono — только для мелких «данных» (url, метки). Кириллица родная.
+// JetBrains Mono — только для мелких «данных» (url, метки) ниже первого экрана,
+// поэтому preload не нужен: не конкурирует за полосу с LCP-ресурсами.
 const mono = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "500"],
   variable: "--font-mono",
   display: "swap",
-  preload: true,
+  preload: false,
 });
+
+// Коды верификации панелей поисковиков — только из env, пустые не выводим.
+const YANDEX_VERIFICATION = process.env.NEXT_PUBLIC_YANDEX_VERIFICATION;
+const GOOGLE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
 
 export const viewport: Viewport = {
   themeColor: "#f5f6f4",
@@ -92,6 +98,14 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
+  ...(YANDEX_VERIFICATION || GOOGLE_VERIFICATION
+    ? {
+        verification: {
+          ...(GOOGLE_VERIFICATION ? { google: GOOGLE_VERIFICATION } : {}),
+          ...(YANDEX_VERIFICATION ? { yandex: YANDEX_VERIFICATION } : {}),
+        },
+      }
+    : {}),
   other: {
     "geo.region": "RU-MOW",
     "geo.placename": "Moscow",
@@ -106,11 +120,17 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`${grotesk.variable} ${mono.variable}`}>
       <head>
+        {/* Постер hero-видео — главный LCP-кандидат: качаем с высоким приоритетом */}
+        <link
+          rel="preload"
+          as="image"
+          href="/works/hero-poster.webp"
+          fetchPriority="high"
+        />
+        {/* Вход героя — чистые CSS-анимации (см. globals.css), noscript нужен
+            только для .reveal, которые показываются по скроллу через JS */}
         <noscript>
-          <style>{`.reveal{opacity:1!important;transform:none!important}
-.hero-kicker,.hero-sub,.hero-actions,.hero-cue{opacity:1!important;transform:none!important}
-.hero-title .w{transform:none!important}
-.stage-reel{opacity:1!important;transform:none!important}`}</style>
+          <style>{`.reveal{opacity:1!important;transform:none!important}`}</style>
         </noscript>
         <JsonLd id="ld-org" data={organizationLd()} />
         <JsonLd id="ld-site" data={websiteLd()} />
@@ -118,6 +138,7 @@ export default function RootLayout({
       <body>
         <a href="#main" className="skip-link">Перейти к содержанию</a>
         {children}
+        <Metrika />
       </body>
     </html>
   );

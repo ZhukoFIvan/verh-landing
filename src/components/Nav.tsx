@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { NAV_LINKS } from "@/lib/site";
+import { NAV_LINKS, SITE } from "@/lib/site";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
@@ -55,9 +55,9 @@ export function Nav() {
         </div>
         <div className="m-foot">
           <span className="m-status">Берём новые проекты</span>
-          <a href="mailto:hi@verh.studio">hi@verh.studio</a>
-          <a href="https://t.me/verh_studio" target="_blank" rel="noopener noreferrer">
-            @verh_studio в Telegram
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
+            {SITE.telegramHandle} в Telegram
           </a>
         </div>
       </div>

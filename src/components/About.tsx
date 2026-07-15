@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { SITE } from "@/lib/site";
 
-function FounderPhoto({ src, initials, i }: { src: string; initials: string; i: number }) {
+function FounderPhoto({ src, initials, alt, i }: { src: string; initials: string; alt: string; i: number }) {
   const [broken, setBroken] = useState(false);
   return (
     <div className="f-photo" data-i={i}>
       <span className="f-initials" aria-hidden="true">{initials}</span>
       {!broken && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} />
+        <img src={src} alt={alt} loading="lazy" decoding="async" onError={() => setBroken(true)} />
       )}
     </div>
   );
@@ -32,17 +32,21 @@ export function About() {
 
       <div className="team">
         {SITE.team.map((m, i) => (
+          // Основатели размечены только в JSON-LD (founder в organizationLd)
           <article
             key={m.name}
             className="founder reveal"
             style={{ transitionDelay: `${i * 0.1}s` }}
-            itemScope
-            itemType="https://schema.org/Person"
           >
-            <FounderPhoto src={m.photo} initials={m.initials} i={i} />
+            <FounderPhoto
+              src={m.photo}
+              initials={m.initials}
+              alt={`${m.full} — ${m.role}, веб-студия VERH`}
+              i={i}
+            />
             <div className="f-body">
-              <div className="f-name" itemProp="name">{m.full}</div>
-              <div className="f-role" itemProp="jobTitle">{m.role}</div>
+              <div className="f-name">{m.full}</div>
+              <div className="f-role">{m.role}</div>
               <p className="f-bio">{m.bio}</p>
               <div className="f-focus">
                 {m.focus.map((f) => (

@@ -20,9 +20,11 @@ function WorkImage({ src, phClass, id, alt }: { src?: string; phClass: string; i
   }, [src]);
 
   return (
-    <div className={`ph${phClass ? " " + phClass : ""}`} aria-hidden="true">
+    // aria-hidden только на декоративном скелете: скриншот кейса — контентная
+    // картинка, её alt должен быть жив и для скринридеров, и для поисковиков
+    <div className={`ph${phClass ? " " + phClass : ""}`}>
       {/* лёгкий скелет продукта, пока нет реального скриншота */}
-      <div className="ph-skeleton">
+      <div className="ph-skeleton" aria-hidden="true">
         <span className="ph-index">{id}</span>
         <span className="s-bar a" /><span className="s-bar b" /><span className="s-bar c" />
       </div>
@@ -34,6 +36,7 @@ function WorkImage({ src, phClass, id, alt }: { src?: string; phClass: string; i
           src={src}
           alt={alt}
           loading="lazy"
+          decoding="async"
           onLoad={() => setLoaded(true)}
           onError={() => setBroken(true)}
         />
@@ -46,7 +49,7 @@ export function Work() {
   return (
     <section className="block" id="work" aria-labelledby="work-title">
       <div className="section-head reveal">
-        <div className="section-tag">Работы · 2026</div>
+        <div className="section-tag">Работы · сайты, боты, веб-приложения</div>
         <h2 className="section-title" id="work-title">
           Не только сайты — <em>цельные продукты.</em>
         </h2>
@@ -58,12 +61,11 @@ export function Work() {
 
       <div className="works">
         {WORKS.map((w) => (
+          // Работы размечены только в JSON-LD (portfolioLd), микроданные — дубль
           <article
             key={w.slug}
             id={`work-${w.slug}`}
             className={`work reveal${(w as { wide?: boolean }).wide ? " wide" : ""}`}
-            itemScope
-            itemType="https://schema.org/CreativeWork"
           >
             <div className="work-media">
               <div className="corner">{w.cornerLabel}</div>
@@ -71,25 +73,21 @@ export function Work() {
                 src={(w as { image?: string }).image}
                 phClass={w.phClass}
                 id={w.id}
-                alt={`${w.title}${w.accent ? " " + w.accent : ""} — ${w.industry}`}
+                alt={`Скриншот: ${w.title}${w.accent ? " " + w.accent : ""} — ${w.industry}`}
               />
               <div className="ph-label mono" aria-hidden="true">{w.industry}</div>
-              {(w as { image?: string }).image && (
-                <meta itemProp="image" content={(w as { image?: string }).image} />
-              )}
             </div>
             <div className="work-info">
               <div className="num mono">Кейс {w.id}</div>
-              <h3 itemProp="name">
+              <h3>
                 {w.title} {w.accent && <span className="acc">{w.accent}</span>}
               </h3>
-              <p className="desc" itemProp="description">
+              <p className="desc">
                 {w.description}
               </p>
-              <meta itemProp="about" content={w.industry} />
-              <div className="tags" aria-label="Технологии и категории">
+              <div className="tags" role="list" aria-label="Технологии и категории">
                 {w.tags.map((t) => (
-                  <span key={t} className="tag">{t}</span>
+                  <span key={t} className="tag" role="listitem">{t}</span>
                 ))}
               </div>
             </div>

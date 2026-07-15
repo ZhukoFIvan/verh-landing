@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   description:
     "Эта страница не найдена. Вернитесь на главную VERH — веб-студии, или посмотрите работы, услуги и FAQ.",
   robots: { index: false, follow: true },
-  alternates: { canonical: "/404" },
 };
 
 export default function NotFound() {

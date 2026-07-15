@@ -12,15 +12,35 @@ export function HeroReel() {
     if (!v) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // play() запускает скачивание видео (~600KB) немедленно, поэтому до
+    // window.load не стартуем: видео не должно конкурировать за полосу
+    // с LCP-постером, шрифтами и JS в критическом окне загрузки.
+    let wantPlay = false;
+    const tryPlay = () => {
+      if (wantPlay) v.play().catch(() => {});
+    };
+
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) v.play().catch(() => {});
-        else v.pause();
+        wantPlay = e.isIntersecting;
+        if (!e.isIntersecting) {
+          v.pause();
+          return;
+        }
+        if (document.readyState === "complete") tryPlay();
+        // иначе — сыграет обработчик window.load ниже
       },
       { threshold: 0.2 },
     );
+
+    if (document.readyState !== "complete") {
+      window.addEventListener("load", tryPlay, { once: true });
+    }
     io.observe(v);
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      window.removeEventListener("load", tryPlay);
+    };
   }, []);
 
   return (

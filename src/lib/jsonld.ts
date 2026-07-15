@@ -11,7 +11,12 @@ export function organizationLd() {
     name: SITE.legalName,
     alternateName: SITE.name,
     url: SITE.url,
-    logo: `${SITE.url}/favicon.svg`,
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE.url}/icon-512.png`,
+      width: 512,
+      height: 512,
+    },
     image: `${SITE.url}/opengraph-image`,
     description: SITE.description,
     foundingDate: SITE.founded,
@@ -26,8 +31,8 @@ export function organizationLd() {
       { "@type": "Country", name: "Россия" },
       { "@type": "Country", name: "Беларусь" },
       { "@type": "Country", name: "Казахстан" },
-      { "@type": "AdministrativeArea", name: "СНГ" },
-      { "@type": "Place", name: "Worldwide" },
+      "СНГ",
+      "Worldwide",
     ],
     address: {
       "@type": "PostalAddress",
@@ -60,6 +65,7 @@ export function organizationLd() {
       {
         "@type": "ContactPoint",
         email: SITE.email,
+        url: SITE.socials.telegram,
         contactType: "sales",
         areaServed: "RU",
         availableLanguage: ["Russian", "English"],
@@ -68,16 +74,12 @@ export function organizationLd() {
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Услуги VERH Studio",
+      // Ссылаемся на канонические узлы Service из servicesLd() по @id,
+      // чтобы поисковики не видели два несвязанных набора услуг.
       itemListElement: SERVICES.map((s, i) => ({
         "@type": "Offer",
         position: i + 1,
-        itemOffered: {
-          "@type": "Service",
-          name: s.name,
-          description: s.long,
-          provider: { "@id": `${SITE.url}/#organization` },
-          url: `${SITE.url}/#services`,
-        },
+        itemOffered: { "@id": `${SITE.url}/#service-${s.slug}` },
       })),
     },
   };
@@ -111,17 +113,19 @@ export function faqLd() {
   };
 }
 
-export function breadcrumbLd() {
+// Хлебные крошки только там, где есть реальная иерархия (не секции лендинга).
+export function privacyBreadcrumbLd() {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Главная", item: SITE.url },
-      { "@type": "ListItem", position: 2, name: "Работы", item: `${SITE.url}/#work` },
-      { "@type": "ListItem", position: 3, name: "Услуги", item: `${SITE.url}/#services` },
-      { "@type": "ListItem", position: 4, name: "Студия", item: `${SITE.url}/#about` },
-      { "@type": "ListItem", position: 5, name: "FAQ", item: `${SITE.url}/#faq` },
-      { "@type": "ListItem", position: 6, name: "Контакты", item: `${SITE.url}/#contact` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Политика обработки персональных данных",
+        item: `${SITE.url}/privacy`,
+      },
     ],
   };
 }
@@ -142,6 +146,7 @@ export function portfolioLd() {
         name: w.accent ? `${w.title} ${w.accent}` : w.title,
         description: w.description,
         url: `${SITE.url}/#work-${w.slug}`,
+        image: `${SITE.url}${w.image}`,
         creator: { "@id": `${SITE.url}/#organization` },
         about: w.industry,
         keywords: (w.tags as readonly string[]).join(", "),
@@ -161,7 +166,7 @@ export function servicesLd() {
       serviceType: s.name,
       provider: { "@id": `${SITE.url}/#organization` },
       areaServed: { "@type": "Country", name: "Россия" },
-      url: `${SITE.url}/#services`,
+      url: `${SITE.url}/#service-${s.slug}`,
       category: (s.tags as readonly string[]).join(", "),
     })),
   };

@@ -3,7 +3,7 @@ import { HeroReel } from "@/components/HeroReel";
 
 export function Hero() {
   return (
-    <header className="hero" id="hero" itemScope itemType="https://schema.org/WPHeader">
+    <section className="hero" id="hero" aria-label="Главный экран">
       <ShaderBg />
       <div className="hero-aurora" aria-hidden="true">
         <span className="a1" />
@@ -17,7 +17,7 @@ export function Hero() {
           Веб-студия · Москва
         </span>
 
-        <h1 className="hero-title" itemProp="headline">
+        <h1 className="hero-title">
           <span className="reveal-line">
             <span className="w" style={{ "--i": 0 } as React.CSSProperties}>Сайты</span>{" "}
             <span className="w" style={{ "--i": 1 } as React.CSSProperties}>и</span>{" "}
@@ -30,13 +30,8 @@ export function Hero() {
         </h1>
 
         <p className="hero-sub">
-          Нас двое — дизайн и код. Делаем сайты, Telegram-боты и веб-приложения:
+          Нас двое — дизайн и код. Разработка сайтов, Telegram-ботов и веб-приложений:
           придумываем, рисуем и доводим до прода. Без агентства и прослойки из менеджеров.
-        </p>
-
-        <p className="sr-only">
-          VERH — небольшая веб-студия из Москвы. Разработка сайтов, лендингов, веб-приложений,
-          Telegram-ботов и AI-сервисов. Дизайн и код в одних руках, без шаблонов и конструкторов.
         </p>
 
         <div className="hero-actions">
@@ -57,6 +52,6 @@ export function Hero() {
         <span className="mouse"><i /></span>
         <span>листайте вниз</span>
       </a>
-    </header>
+    </section>
   );
 }

@@ -1,18 +1,43 @@
 {
   "name": "VERH — веб-студия",
   "short_name": "VERH",
-  "description": "Веб-студия в Москве. Разработка сайтов под ключ: лендинги, корпоративные сайты, e-commerce, брендинг.",
+  "description": "Веб-студия в Москве. Разработка сайтов и лендингов, веб-приложения, Telegram-боты и AI-сервисы.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f4f5f2",
-  "theme_color": "#f4f5f2",
+  "background_color": "#f5f6f4",
+  "theme_color": "#f5f6f4",
   "lang": "ru-RU",
-  "categories": ["business", "design", "productivity"],
+  "categories": [
+    "business",
+    "design",
+    "productivity"
+  ],
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

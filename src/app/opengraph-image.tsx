@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { SITE } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -58,7 +59,7 @@ export default function Image() {
             paddingTop: 26,
           }}
         >
-          <div style={{ display: "flex" }}>verh.studio</div>
+          <div style={{ display: "flex" }}>{new URL(SITE.url).host}</div>
           <div style={{ display: "flex", color: "#1f9d55", fontWeight: 600 }}>дизайн · код · AI</div>
         </div>
       </div>
