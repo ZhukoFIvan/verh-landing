@@ -11,6 +11,11 @@
 // Требует: TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET (читает и из .env рядом).
 
 import { readFileSync } from "node:fs";
+import dns from "node:dns";
+
+// К api.telegram.org с RU-хоста IPv4 душится (таймаут), а IPv6 работает.
+// Просим Node предпочитать IPv6 (на сервере ещё и пиннинг в /etc/hosts).
+dns.setDefaultResultOrder("ipv6first");
 
 // Самодостаточная загрузка .env: не зависим от того, как pm2 прокинул окружение
 // (именно из-за пустого env при рестарте раньше отваливался вебхук-секрет).
@@ -72,6 +77,10 @@ async function deliver(update) {
     });
     if (!res.ok) {
       console.error(`[poller] локальная доставка update ${update.update_id}: HTTP ${res.status}`);
+    } else {
+      const kind = update.message ? "message" : update.callback_query ? "callback" : "other";
+      const from = update.message?.from?.id ?? update.callback_query?.from?.id ?? "?";
+      console.log(`[poller] доставлен update ${update.update_id} (${kind}, from ${from})`);
     }
   } catch (e) {
     console.error(`[poller] ошибка доставки update ${update.update_id}:`, e?.message || e);
