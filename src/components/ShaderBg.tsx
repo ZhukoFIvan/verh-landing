@@ -40,13 +40,13 @@ const FRAG = /* glsl */ `
     float f = fbm(p + 1.7*q + t*0.4);
 
     vec3 base  = vec3(0.957, 0.961, 0.949);
-    vec3 green = vec3(0.153, 0.616, 0.333);
-    vec3 blue  = vec3(0.55, 0.68, 1.0);
-    vec3 warm  = vec3(1.0, 0.86, 0.55);
+    vec3 red   = vec3(0.780, 0.227, 0.267);
+    vec3 coral = vec3(0.900, 0.420, 0.400);
+    vec3 warm  = vec3(1.000, 0.860, 0.550);
 
     vec3 col = base;
-    col = mix(col, green, smoothstep(0.30, 0.92, f) * 0.55);
-    col = mix(col, blue,  smoothstep(0.40, 0.98, q.x) * 0.38);
+    col = mix(col, red,   smoothstep(0.30, 0.92, f) * 0.50);
+    col = mix(col, coral, smoothstep(0.40, 0.98, q.x) * 0.34);
     col = mix(col, warm,  smoothstep(0.55, 1.02, q.y) * 0.20);
 
     float d = distance(uv, vec2(0.5, 0.40));

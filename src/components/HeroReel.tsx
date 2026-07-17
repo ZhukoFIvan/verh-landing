@@ -48,14 +48,14 @@ export function HeroReel() {
       <video
         ref={ref}
         className="reel-video"
-        poster="/works/hero-poster.webp"
+        poster="/works/hero-v2-poster.webp"
         muted
         loop
         playsInline
         preload="none"
       >
-        <source src="/works/hero.webm" type="video/webm" />
-        <source src="/works/hero.mp4" type="video/mp4" />
+        <source src="/works/hero-v2.webm" type="video/webm" />
+        <source src="/works/hero-v2.mp4" type="video/mp4" />
       </video>
       <span className="reel-badge">
         <span className="dot" aria-hidden="true" /> Магнезия · лендинг

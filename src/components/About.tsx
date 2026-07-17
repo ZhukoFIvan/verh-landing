@@ -61,15 +61,11 @@ export function About() {
       <dl className="about-meta reveal d2">
         <div className="item">
           <dt className="k">Свои продукты</dt>
-          <dd className="v"><b>2</b> в проде</dd>
+          <dd className="v"><b>10+</b> в проде</dd>
         </div>
         <div className="item">
           <dt className="k">Стек</dt>
-          <dd className="v">Next.js · AI · TG</dd>
-        </div>
-        <div className="item">
-          <dt className="k">Свободных слотов</dt>
-          <dd className="v"><b>2</b> сейчас</dd>
+          <dd className="v">Next.js · React · Node · AI</dd>
         </div>
         <div className="item">
           <dt className="k">Где</dt>

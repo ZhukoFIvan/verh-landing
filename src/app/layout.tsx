@@ -124,7 +124,7 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
-          href="/works/hero-poster.webp"
+          href="/works/hero-v2-poster.webp"
           fetchPriority="high"
         />
         {/* Вход героя — чистые CSS-анимации (см. globals.css), noscript нужен

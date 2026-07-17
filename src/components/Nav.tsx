@@ -16,9 +16,9 @@ export function Nav() {
     <>
       <nav className="top" id="topnav" aria-label="Главная навигация">
         <a href="#hero" className="logo" aria-label="VERH — на главную">
-          <svg className="logo-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path className="leg" d="M11 5 L20 21" />
-            <path className="peak" d="M3 21 L10 2.5 L7.4 21 Z" />
+          <svg className="logo-mark" viewBox="0 0 141.7 141.7" aria-hidden="true" focusable="false">
+            <path d="M128.5,0H13.2C5.9,0,0,5.9,0,13.2s5.9,13.2,13.2,13.2h83.3L3.9,119.1c-5.2,5.2-5.2,13.6,0,18.7c5.2,5.2,13.5,5.2,18.7,0l92.7-92.7v83.3c0,7.3,5.9,13.2,13.2,13.2c7.3,0,13.2-5.9,13.2-13.2V13.2C141.7,5.9,135.8,0,128.5,0z" />
+            <path d="M81.4,96.2l-23,23c-5.2,5.2-5.2,13.5,0,18.7c5.2,5.2,13.5,5.2,18.7,0l23-23c5.2-5.2,5.2-13.6,0-18.7C95,91,86.6,91,81.4,96.2z" />
           </svg>
           verh
         </a>
